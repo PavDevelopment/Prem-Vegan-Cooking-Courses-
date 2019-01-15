@@ -1,44 +1,44 @@
-import {Component, OnInit} from '@angular/core';
-import {Course} from '../model/course';
-import {Observable} from 'rxjs';
-import {filter, map, tap, withLatestFrom} from 'rxjs/operators';
-import {CoursesService} from '../services/courses.service';
-import {AppState} from '../../reducers';
-import {select, Store} from '@ngrx/store';
-import {selectAdvancedCourses, selectAllCourses, selectBeginnerCourses, selectPromoTotal, selectIntermediateCourses} from '../course.selectors';
-import {AllCoursesRequested} from '../course.actions';
+import { Component, OnInit } from '@angular/core';
+import { Course } from '../model/course';
+import { Observable } from 'rxjs';
+import { filter, map, tap, withLatestFrom } from 'rxjs/operators';
+import { CoursesService } from '../services/courses.service';
+import { AppState } from '../../reducers';
+import { select, Store } from '@ngrx/store';
+import {
+  selectAdvancedCourses,
+  selectAllCourses,
+  selectBeginnerCourses,
+  selectPromoTotal,
+  selectIntermediateCourses
+} from '../course.selectors';
+import { AllCoursesRequested } from '../course.actions';
 @Component({
-    selector: 'home',
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.css']
+  selector: 'home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+  promoTotal$: Observable<number>;
 
-    promoTotal$: Observable<number>;
+  beginnerCourses$: Observable<Course[]>;
 
-    beginnerCourses$: Observable<Course[]>;
+  advancedCourses$: Observable<Course[]>;
 
-    advancedCourses$: Observable<Course[]>;
+  intermediateCourses$: Observable<Course[]>;
+  constructor(private store: Store<AppState>) {}
 
-    intermediateCourses$: Observable<Course[]>;
-    constructor(private store: Store<AppState>) {
+  ngOnInit() {
+    this.store.dispatch(new AllCoursesRequested());
 
-    }
+    this.beginnerCourses$ = this.store.pipe(select(selectBeginnerCourses));
 
-    ngOnInit() {
+    this.advancedCourses$ = this.store.pipe(select(selectAdvancedCourses));
 
-        this.store.dispatch(new AllCoursesRequested());
+    this.intermediateCourses$ = this.store.pipe(
+      select(selectIntermediateCourses)
+    );
 
-        this.beginnerCourses$ = this.store.pipe(select(selectBeginnerCourses));
-
-        this.advancedCourses$ = this.store.pipe(select(selectAdvancedCourses));
-
-        this.intermediateCourses$ = this.store.pipe(
-            select(selectIntermediateCourses)
-          );
-
-        this.promoTotal$ = this.store.pipe(select(selectPromoTotal));
-
-    }
-
+    // this.promoTotal$ = this.store.pipe(select(selectPromoTotal));
+  }
 }
